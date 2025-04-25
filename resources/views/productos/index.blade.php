@@ -13,11 +13,8 @@
                     {{ session('message')}}
                 </div>
             @endif
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-                    {{ __("Mis Productos") }}
-                </div>
-            </div>
+            
+            <livewire:mostrar-productos>
         </div>
     </div>
 </x-app-layout>

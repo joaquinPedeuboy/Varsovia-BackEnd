@@ -4,11 +4,25 @@
         @forelse ($productos as $producto)
             <div class="p-6 bg-white border-b border-gray-200 md:flex md:justify-between md:items-center">
                 <div class="space-y-2">
-                    <a href="#" class="text-xl font-bold">
-                        {{ $producto->titulo}}
-                    </a>
+                    <div class="flex items-baseline space-x-2">
+                        {{-- Título --}}
+                        <a href="#" class="text-xl font-bold">
+                            {{ $producto->titulo }}
+                        </a>
+                    
+                        {{-- Si tiene alguna oferta, muestra badge verde con precio --}}
+                        @if($producto->ofertas->isNotEmpty())
+                            @php
+                            // Tomamos la primera oferta; ajusta si quieres lógica distinta
+                            $oferta = $producto->ofertas->first();
+                            @endphp
+                            <span class="text-sm bg-green-100 text-green-800 font-semibold px-2 py-1 rounded">
+                            En oferta
+                            </span>
+                        @endif
+                    </div>
                     <p class="text-sm text-gray-600">Stock: <span class="text-slate-900 font-black">{{ $producto->stock }}</span> unidades</p>
-                    <p class="text-sm text-gray-600">Precio: <span class="text-green-600 font-bold">${{ $producto->precio }}</span></p>
+                    <p class="text-sm text-gray-600">Precio: <span class="text-green-600 font-bold">${{ number_format($producto->precio, 2) }}</span></p>
                     <p class="text-sm text-gray-600">Disponible en web: 
                         @if ($producto->disponible)
                             <span class="text-green-600 font-bold">Disponible</span>

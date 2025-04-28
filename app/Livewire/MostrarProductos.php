@@ -15,7 +15,9 @@ class MostrarProductos extends Component
 
     public function render()
     {
-        $productos = Producto::orderBy('created_at', 'desc')->paginate(10);
+        $productos = Producto::with('ofertas')    // ← eager-load
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
 
         return view('livewire.mostrar-productos', [
             'productos' => $productos

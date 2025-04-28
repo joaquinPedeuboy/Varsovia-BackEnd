@@ -225,6 +225,60 @@
         @enderror
     </div>
 
+    {{-- ######################## --}}
+    {{-- sección dinámcia de ofertas --}}
+    <div class="border p-4 rounded-lg">
+        <div class="flex justify-between items-center mb-2">
+        <h3 class="font-semibold">Ofertas del Producto</h3>
+        <button 
+            type="button"
+            wire:click.prevent="addOferta"
+            class="px-3 py-1 bg-green-600 hover:bg-green-900 text-white rounded"
+        >
+            + Agregar Oferta
+        </button>
+        </div>
+
+        @foreach($ofertasData as $i => $of)
+        <div class="grid grid-cols-3 gap-4 mb-4 items-end">
+            <div>
+            <x-input-label :for="'precio_oferta.'.$i" :value="__('Precio Oferta')" />
+            <x-text-input 
+                :id="'precio_oferta.'.$i" 
+                wire:model="ofertasData.{{ $i }}.precio_oferta" 
+                type="number" step="0.01"
+                class="mt-1 w-full"
+            />
+            @error("ofertasData.$i.precio_oferta") 
+                <livewire:mostrar-alerta :message="$message" /> 
+            @enderror
+            </div>
+
+            <div>
+            <x-input-label :for="'stock_oferta.'.$i" :value="__('Stock Oferta')" />
+            <x-text-input 
+                :id="'stock_oferta.'.$i" 
+                wire:model="ofertasData.{{ $i }}.stock_oferta" 
+                type="number"
+                class="mt-1 w-full"
+            />
+            @error("ofertasData.$i.stock_oferta") 
+                <livewire:mostrar-alerta :message="$message" /> 
+            @enderror
+            </div>
+
+            <button 
+            type="button"
+            wire:click.prevent="removeOferta({{ $i }})"
+            class="px-3 py-1 bg-red-600 text-white rounded"
+            >
+            Eliminar
+            </button>
+        </div>
+        @endforeach
+    </div>
+    {{-- ######################## --}}
+
     <x-primary-button>
         Crear Producto
     </x-primary-button>

@@ -3,10 +3,11 @@
 namespace App\Livewire;
 
 use App\Models\Sexo;
+use App\Models\Talla;
 use App\Models\Imagen;
+use App\Models\Oferta;
 use Livewire\Component;
 use App\Models\Producto;
-use App\Models\Talla;
 use Livewire\WithFileUploads;
 
 class CrearProducto extends Component
@@ -25,6 +26,8 @@ class CrearProducto extends Component
     public $disponible = false;
     public $imagenes = []; // Aquí se guardarán los archivos subidos
 
+    public $ofertasData = [];
+
     protected $rules = [
         'titulo'        => 'required|string',
         'codigo_barras' => 'required|string|regex:/^[0-9]{6,13}$/',
@@ -39,6 +42,12 @@ class CrearProducto extends Component
         'disponible'    => 'boolean',
         'imagenes.*'    => 'image|max:3072',
         'imagenes'      => 'required|array|min:1',
+
+        // Validación de ofertas: 
+        // el arreglo puede estar vacío, pero si hay elementos, se validan
+        'ofertasData'               => 'array',
+        'ofertasData.*.precio_oferta' => 'required|numeric|min:0',
+        'ofertasData.*.stock_oferta'  => 'required|integer|min:0',
         
     ];
 
@@ -49,6 +58,17 @@ class CrearProducto extends Component
         'imagenes.*.max' => 'Cada imagen no debe superar los 3MB.',
     ];
     
+    public function addOferta()
+    {
+        // añade un nuevo slot en blanco para una oferta
+        $this->ofertasData[] = ['precio_oferta' => null, 'stock_oferta' => null];
+    }
+    
+    public function removeOferta($index)
+    {
+        unset($this->ofertasData[$index]);
+        $this->ofertasData = array_values($this->ofertasData);
+    }
 
     public function crearProducto()
     {
@@ -87,6 +107,16 @@ class CrearProducto extends Component
             ]);
         }
 
+
+        // 4️⃣ Creamos y attach de ofertas
+        foreach ($this->ofertasData as $of) {
+            $o = Oferta::create([
+                'precio_oferta' => $of['precio_oferta'],
+                'stock_oferta'  => $of['stock_oferta'],
+            ]);
+            $producto->ofertas()->attach($o->id);
+        }
+
         // Reinicia las propiedades del componente
         $this->reset([
             'titulo',
@@ -99,7 +129,8 @@ class CrearProducto extends Component
             'stock', 
             'descripcion', 
             'disponible', 
-            'imagenes'
+            'imagenes',
+            'ofertasData'
         ]);
         session()->flash('message', '¡Producto creado con éxito!');
 
